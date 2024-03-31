@@ -24,4 +24,4 @@ def index(request):
         },
     ]
 
-    return render(request, "index.html", {"plans": plans})
+    return render(request, "index1.html", {"plans": plans})

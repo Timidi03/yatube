@@ -10,22 +10,8 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     group = models.ForeignKey('Group', on_delete=models.SET_NULL, blank=True, null=True, related_name='posts')
     
-    
-GENRE_CHOICES = (
-    ("R", "Рок"),
-    ("E", "Электроника"),
-    ("P", "Поп"),
-    ("C", "Классика"),
-    ("O", "Саундтреки"),
-)
-
-
-class CD(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    artist = models.CharField(max_length=40)
-    date = models.DateField()
-    genre = models.CharField(max_length=1, choices=GENRE_CHOICES)
+    def __str__(self) -> str:
+        return str(self.id)
 
 
 class Group(models.Model):
