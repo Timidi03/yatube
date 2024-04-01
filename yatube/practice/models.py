@@ -19,7 +19,7 @@ class CD(models.Model):
     genre = models.CharField(max_length=1, choices=GENRE_CHOICES)
     
     def __repr__(self):
-        return "Вот я такой кросавчик"
+        return self.title
     
 
 class Contact(models.Model):

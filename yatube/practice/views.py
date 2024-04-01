@@ -1,27 +1,30 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from .forms import EnhanceFrom
+from django.core.mail import send_mail
 
 
-# Create your views here.
-def index(request):
+def exchange(request):
+    form = EnhanceFrom(request.POST)
+    if request.method == 'POST' and form.is_valid():
+        send_msg(**form.cleaned_data)
+        return thankyou(request)
+    return render(request, "index1.html", {'form': form})
 
-    # Доступные тарифные планы
-    plans = [
-        {
-            "name": "Бесплатно",
-            "price": "0",
-            "options": {"users": 10, "space": 10, "support": "Почтовая рассылка"},
-        },
-        {
-            "name": "Профессиональный",
-            "price": "49",
-            "options": {"users": 50, "space": 100, "support": "Телефон и email"},
-        },
-        {
-            "name": "Корпоративный",
-            "price": "99",
-            "options": {"users": 100, "space": 500, "support": "Персональный менеджер"},
-        },
-    ]
+def thankyou(request):
+    return render(request, "thankyou.html")
 
-    return render(request, "index1.html", {"plans": plans})
+def send_msg(email, name, title, artist, genre, price, comment):
+    subject = f"Обмен {artist}-{title}"
+    body = f"""Предложение на обмен диска от {name} ({email})
+
+    Название: {title}
+    Исполнитель: {artist}
+    Жанр: {genre}
+    Стоимость: {price}
+    Комментарий: {comment}
+
+    """
+    send_mail(
+        subject, body, email, ["admin@rockenrolla.net", ],
+    )

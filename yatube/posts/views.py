@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from .models import Group, Post
+from .forms import PostForm
 import datetime as dt
 
 def index(request):
@@ -27,3 +28,18 @@ def group_posts(request, slug):
     
     posts = Post.objects.filter(group=group).order_by('-pub_date')[:12]
     return render(request, 'group.html', {'group': group, 'posts': posts})
+
+
+def new_post(request):
+    form = PostForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        group = Group.objects.filter(slug=form.cleaned_data['group'])
+        group = group.first() if group else None
+        Post.objects.create(
+            text = form.cleaned_data['text'],
+            author = request.user,
+            group = group
+        )
+        return redirect('index')
+    return render(request, 'new_post.html', {'form': form})
+    
