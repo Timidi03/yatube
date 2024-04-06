@@ -1,5 +1,7 @@
 from django.test import TestCase
 
-from .models import Group
-
-print([i.title for i in Group.objects.all()])
+class TestStringMethods(TestCase):
+    def test_length(self):
+                self.assertEqual(len('yatube'), 6)
+                
+    

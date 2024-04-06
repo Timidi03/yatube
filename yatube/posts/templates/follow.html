@@ -1,0 +1,28 @@
+{% extends "base.html" %} 
+{% block title %} Последние обновления {% endblock %}
+{% block content %}
+{% include "menu.html" with follow=True %}
+  <h1>Поиск по записям</h1>
+    <strong class="card">
+      <div class="card-body">
+        <form class="form-inline">
+          <div class="form-row">
+            <input name="q" class="form-control form-control-lg" type="search"
+            placeholder="Поиск" {% if keyword %} value="{{ keyword }}"{% endif %}>
+            <button class="btn" type="submit">Найти</button>
+          </div>
+        </form>
+      </div>
+    </strong>
+    <hr>
+    {% for post in page %}
+      <!-- Вот он, новый include! -->
+        {% include "post_item.html" with post=post %}
+    {% endfor %}
+
+    {% if page.has_other_pages %}
+        {% include "paginator.html" with items=page paginator=paginator q=keyword %}
+    {% endif %} 
+{% endblock %}
+
+    
