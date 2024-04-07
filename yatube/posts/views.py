@@ -30,7 +30,6 @@ def group_posts(request, slug):
         return groups.first()
     
     group = get_object_or_404(Group, slug=slug) 
-    print(group)
     if not group:
         return HttpResponse(status=404)
     
@@ -59,7 +58,10 @@ def new_post(request):
 
 def profile(request, username):
         author = User.objects.get(username=username)
-        following = bool(Follow.objects.filter(user=request.user, author=author).count())
+        try:
+            following = bool(Follow.objects.filter(user=request.user, author=author).count())
+        except Exception:
+            following = False
         posts = Post.objects.filter(author_id=author.id)
         paginator = Paginator(posts, 10)
         page_number = request.GET.get('page')
@@ -70,8 +72,8 @@ def profile(request, username):
     
 def post_view(request, username, post_id):
     form = CommentForm()
-    author = User.objects.get(username=username)
-    post = Post.objects.get(id=post_id)
+    author = get_object_or_404(User, username=username)
+    post = get_object_or_404(Post, pk=post_id)
     items = Comment.objects.filter(post_id=post_id).order_by('-created')
     count = Post.objects.filter(author_id=author.id).count()
     return render(request, 'post.html', {'author': author, 'post': post, 'count': count, 
@@ -85,8 +87,6 @@ def post_edit(request, username, post_id):
     if request.user != profile:
         return redirect('post', username, post_id)
     form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
-    print(form.as_p())
-    print(10)
     is_edit = True
     if request.method == 'POST':
         if form.is_valid():
@@ -135,7 +135,7 @@ def follow_index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     
-    return render(request, "follow.html", {'page': page, 'paginator': paginator, 'keyword': keyword})
+    return render(request, "follow.html", {'page': page, 'paginator': paginator, 'keyword': keyword}, status=200)
 
 @login_required
 def profile_follow(request, username):
