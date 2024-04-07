@@ -12,7 +12,10 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
     
     def __str__(self) -> str:
-        return str(self.id)
+        return f'{self.id}, {self.text[:15]}'
+    
+    def __repr__(self) -> str:
+        return f'({self.id}, {self.text[:15]})'
 
 
 class Group(models.Model):

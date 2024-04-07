@@ -29,7 +29,7 @@
               {{ count }}
             </div>
           </li>
-          {% if author.username != request.user.username %}
+          {% if author.username != request.user.username and user.is_authenticated %}
           <li class="list-group-item">
               {% if following %}
               <a class="btn btn-lg btn-light" 
