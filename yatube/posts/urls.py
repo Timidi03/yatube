@@ -1,6 +1,9 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
+from . import api_views, views
 
-from . import views
+router = SimpleRouter()
+router.register('posts', api_views.PostViewSet)
 
 urlpatterns = [
     path('<str:username>/<int:post_id>/comment/', views.add_comment, name='add_comment'),
@@ -14,6 +17,11 @@ urlpatterns = [
     path('<str:username>/', views.profile, name='profile'),
     path('group/<slug:slug>/', views.group_posts, name='group'),
     path('', views.index, name='index'),
+    
+    
+    # path('api/v1/posts/<int:pk>/', api_views.APIPostDetail.as_view(), name='get_post'),
+    # path('api/v1/posts/', api_views.APIPost.as_view(), name='api_posts'),
+    path('api/v1/', include(router.urls)),
     
 ]
 

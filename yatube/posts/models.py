@@ -5,11 +5,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Post(models.Model):
-    text = models.TextField(null=False)
+    text = models.TextField(null=False, )
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     group = models.ForeignKey('Group', on_delete=models.SET_NULL, blank=True, null=True, related_name='posts')
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    tag = models.ManyToManyField('Tag', through='PostTag')
     
     def __str__(self) -> str:
         return f'{self.id}, {self.text[:15]}'
@@ -41,6 +42,18 @@ class Follow(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
 
     
+class Tag(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self) -> str:
+        return self.name
     
+
+class PostTag(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return f'{self.post}, {self.tag}'
     
     
