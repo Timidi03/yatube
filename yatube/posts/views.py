@@ -6,9 +6,15 @@ from .forms import CommentForm, PostForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from django.db.models.functions import Lower
+from django.http import JsonResponse
+from .serializers import PostSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 
 
-# @cache_page(20, key_prefix='index_page')
+@cache_page(20, key_prefix='index_page')
 def index(request):
     keyword = request.GET.get('q', None)
     post_list = Post.objects.select_related('author').select_related('group').annotate(text_lower=Lower('text')).filter(text_lower__icontains=keyword).order_by('-pub_date') if keyword else Post.objects.order_by('-pub_date')
@@ -57,7 +63,7 @@ def new_post(request):
 
 
 def profile(request, username):
-        author = User.objects.get(username=username)
+        author = get_object_or_404(User, username=username)
         try:
             following = bool(Follow.objects.filter(user=request.user, author=author).count())
         except Exception:
@@ -160,4 +166,3 @@ def page_not_found(request, exception):
     
 def server_error(request):
     return render(request, "misc/500.html", status=500)
-    
